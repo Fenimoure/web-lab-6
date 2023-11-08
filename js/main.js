@@ -1,7 +1,7 @@
 let schedule = [];
 
 schedule[0] = {
-    subject: "Високопродуктивні обчислення", start_time: "09:30", teacher: "Циганок В.В."
+    subject: "Високопродуктивні обчислення", start_time: "09:00", teacher: "Циганок В.В."
 }
 
 schedule[1] = {
@@ -18,8 +18,7 @@ schedule[3] = {
 
 function addToTime(input_hours, input_minutes, add_minutes) {
     input_minutes += add_minutes;
-    input_hours += input_minutes > 60;
-    input_hours = input_hours % 24;
+    input_hours += Math.floor(input_minutes / 60);
     input_minutes = input_minutes % 60;
     return input_hours.toString().padStart(2, "0") + ':' + input_minutes.toString().padStart(2, "0");
 }
@@ -44,7 +43,7 @@ function findLastFinishTime() {
 function lookup() {
     let answerElement = document.getElementById("output");
     let currentDate = document.getElementById('input').valueAsDate;
-    let currentHour = String(currentDate.getHours() - 2).padStart(2, "0");
+    let currentHour = String(currentDate.getHours() - 3).padStart(2, "0");
     let currentMinute = String(currentDate.getMinutes()).padStart(2, "0");
     let currentTime = currentHour + ':' + currentMinute;
     let lastFinishTime = ''
@@ -55,17 +54,17 @@ function lookup() {
         answerElement.innerHTML = 'Пари ще не почалися';
         return;
     }
-    if (currentTime > findLastFinishTime()) {
+    if (currentTime >= findLastFinishTime()) {
         answerElement.innerHTML = 'Пари вже закінчилися';
         return;
     }
     for (let i = 0; i < schedule.length; i++) {
-        if (schedule[i].start_time <= currentTime && currentTime <= findFinishTime(schedule[i].start_time)) {
+        if (schedule[i].start_time <= currentTime && currentTime < findFinishTime(schedule[i].start_time)) {
             answerElement.innerHTML = "Зараз " + schedule[i].subject + copeNoTeacher(schedule[i].teacher);
             return;
         }
         if (i < schedule.length - 1 && findFinishTime(schedule[i].start_time) < currentTime && currentTime < schedule[i + 1].start_time) {
-            answerElement.innerHTML = "Перерва між парами " + i + ' i ' + (i + 1) + '.';
+            answerElement.innerHTML = "Перерва між парами " + (i + 1) + ' i ' + (i + 2) + '.';
             return;
         }
     }
